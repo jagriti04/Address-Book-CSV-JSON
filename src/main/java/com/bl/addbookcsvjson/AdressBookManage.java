@@ -8,6 +8,9 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
+import com.opencsv.exceptions.CsvDataTypeMismatchException;
+import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
+
 public class AdressBookManage {
 
 	private Map<String, AddressBook> nameToAddressBookMap;
@@ -23,7 +26,7 @@ public class AdressBookManage {
 		nameToAddressBookMap.put(addBookName, addBook);
 	}
 
-	public boolean createAddBooks(Scanner input) throws IOException {
+	public boolean createAddBooks(Scanner input) throws IOException, CsvDataTypeMismatchException, CsvRequiredFieldEmptyException {
 		System.out.println("Enter the num of address books to create");
 		int num = input.nextInt();
 		input.nextLine();
@@ -72,7 +75,7 @@ public class AdressBookManage {
 
 	}
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, CsvDataTypeMismatchException, CsvRequiredFieldEmptyException {
 		Scanner userInput = new Scanner(System.in);
 		System.out.println("welcome and create address books ");
 		AdressBookManage addBookManage = new AdressBookManage();

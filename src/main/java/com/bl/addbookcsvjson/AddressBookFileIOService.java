@@ -1,13 +1,26 @@
 package com.bl.addbookcsvjson;
 
 import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Iterator;
+
+import com.opencsv.CSVWriter;
+import com.opencsv.bean.ColumnPositionMappingStrategy;
+import com.opencsv.bean.CsvToBean;
+import com.opencsv.bean.CsvToBeanBuilder;
+import com.opencsv.bean.StatefulBeanToCsv;
+import com.opencsv.bean.StatefulBeanToCsvBuilder;
+import com.opencsv.exceptions.CsvDataTypeMismatchException;
+import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
 public class AddressBookFileIOService {
 	public static String FILE_ADDRESS_BOOK = "address-book-file";
+	public static String CSV_FILE_ADDRESS_BOOK = "address-book-csv";
 
 	// function to write to the file
 	public void writeToFile(ArrayList<ContactDetails> contactList) throws IOException {
@@ -30,12 +43,54 @@ public class AddressBookFileIOService {
 
 	// function to read from the file
 	public void readFromFile() throws IOException {
-		Path filePath = Paths.get(FILE_ADDRESS_BOOK+ ".txt");
+		Path filePath = Paths.get(FILE_ADDRESS_BOOK + ".txt");
 		try {
 			System.out.println("The contact details in the address book file are : ");
 			Files.lines(filePath).map(line -> line.trim()).forEach(line -> System.out.println(line));
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public void writeToCSVFile(ArrayList<ContactDetails> contactList)
+			throws IOException, CsvDataTypeMismatchException, CsvRequiredFieldEmptyException {
+
+		Path filePath = Paths.get(CSV_FILE_ADDRESS_BOOK + ".csv");
+		if (Files.notExists(filePath))
+			Files.createFile(filePath);
+
+		try (Writer writer = Files.newBufferedWriter(Paths.get(filePath.toUri()));) {
+			StatefulBeanToCsv<ContactDetails> beanToCsv = new StatefulBeanToCsvBuilder(writer)
+					.withQuotechar(CSVWriter.NO_QUOTE_CHARACTER).build();
+			beanToCsv.write(contactList);
+
+		}
+
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public void readFromCSVFile() throws IOException {
+		Path filePath = Paths.get(CSV_FILE_ADDRESS_BOOK + ".csv");
+		try (Reader reader = Files.newBufferedReader(Paths.get(filePath.toUri()));) {
+			
+			CsvToBean<ContactDetails> csvToBean = new CsvToBeanBuilder(reader).withType(ContactDetails.class)
+					.withIgnoreLeadingWhiteSpace(true).build();
+
+			Iterator<ContactDetails> AddressBookIterator = csvToBean.iterator();
+
+			while (AddressBookIterator.hasNext()) {
+				ContactDetails contact = AddressBookIterator.next();
+				System.out.println("Firstname : " + contact.firstName);
+				System.out.println("Lastname : " + contact.lastName);
+				System.out.println("Address : " + contact.address);
+				System.out.println("City : " + contact.city);
+				System.out.println("State : " + contact.state);
+				System.out.println("Zip : " + contact.zip);
+				System.out.println("Phone number : " + contact.phoneNo);
+				System.out.println("Email : " + contact.email);
+				System.out.println("-----");
+			}
 		}
 	}
 }

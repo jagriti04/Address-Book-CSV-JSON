@@ -1,8 +1,15 @@
 package com.bl.addbookcsvjson;
 
+import com.opencsv.bean.CsvBindByName;
+
 public class ContactDetails {
+	@CsvBindByName
 	public String firstName, lastName, address, city, state, email;
+
+	@CsvBindByName
 	public long zip;
+
+	@CsvBindByName
 	public long phoneNo;
 
 	public String getFirstName() {
@@ -68,7 +75,9 @@ public class ContactDetails {
 	public void setPhoneNo(long phoneNo) {
 		this.phoneNo = phoneNo;
 	}
-
+	
+	public ContactDetails() { }
+	
 	public ContactDetails(String fName, String lName, String address, String city, String state, long zip, long phoneNo,
 			String email) {
 		this.firstName = fName;

@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.opencsv.exceptions.CsvDataTypeMismatchException;
+import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
+
 public class AddressBook {
 
 	private String addressBookName;
@@ -195,7 +198,8 @@ public class AddressBook {
 		}
 	}
 
-	public AddressBook addressBookOption() throws IOException {
+	public AddressBook addressBookOption()
+			throws IOException, CsvDataTypeMismatchException, CsvRequiredFieldEmptyException {
 		Scanner userInput = new Scanner(System.in);
 		System.out.println("Welcome to the address book system. Choose your option");
 		AddressBook addBook = new AddressBook();
@@ -205,7 +209,8 @@ public class AddressBook {
 			System.out.println("Press 1 for adding contact \nPress 2 to view contacts "
 					+ "\nPress 3 to edit a contact \nPress 4 to delete a contact"
 					+ " \nPress 5 to view sorted address book \nPress 6 to write contact to file"
-					+ "\nPress 7 to read from file \nPress 8 to exit");
+					+ "\nPress 7 to read from file \nPress 8 to write to CSV \nPress 9 to read from CSV"
+					+ " \nPress 10 to exit");
 			int ch = userInput.nextInt();
 
 			switch (ch) {
@@ -250,6 +255,16 @@ public class AddressBook {
 				break;
 
 			case 8:
+				System.out.println("---- Writing on CSV -----");
+				addFileIO.writeToCSVFile(contactDetailList);
+				break;
+
+			case 9:
+				System.out.println("--- Reading from CSV ----");
+				addFileIO.readFromCSVFile();
+				break;
+
+			case 10:
 				System.out.println("exit");
 				runLoop = false;
 				break;
