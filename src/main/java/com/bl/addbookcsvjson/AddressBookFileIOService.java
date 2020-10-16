@@ -1,5 +1,8 @@
 package com.bl.addbookcsvjson;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
@@ -7,10 +10,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 
+import com.google.gson.Gson;
 import com.opencsv.CSVWriter;
-import com.opencsv.bean.ColumnPositionMappingStrategy;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 import com.opencsv.bean.StatefulBeanToCsv;
@@ -21,7 +26,8 @@ import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 public class AddressBookFileIOService {
 	public static String FILE_ADDRESS_BOOK = "address-book-file";
 	public static String CSV_FILE_ADDRESS_BOOK = "address-book-csv";
-
+	public static String JSON_FILE_ADDRESS_BOOK = "address-book-json";
+	
 	// function to write to the file
 	public void writeToFile(ArrayList<ContactDetails> contactList) throws IOException {
 		Path filePath = Paths.get(FILE_ADDRESS_BOOK + ".txt");
@@ -52,6 +58,7 @@ public class AddressBookFileIOService {
 		}
 	}
 
+	// function to write to CSV file
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void writeToCSVFile(ArrayList<ContactDetails> contactList)
 			throws IOException, CsvDataTypeMismatchException, CsvRequiredFieldEmptyException {
@@ -68,7 +75,8 @@ public class AddressBookFileIOService {
 		}
 
 	}
-
+	
+	// function to read from CSV file
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void readFromCSVFile() throws IOException {
 		Path filePath = Paths.get(CSV_FILE_ADDRESS_BOOK + ".csv");
@@ -91,6 +99,37 @@ public class AddressBookFileIOService {
 				System.out.println("Email : " + contact.email);
 				System.out.println("-----");
 			}
+		}
+	}
+	
+	// write to json file
+	public void writeToJsonFile(ArrayList<ContactDetails> contactList) throws IOException {
+		String SAMPLE_JSON_FILE = JSON_FILE_ADDRESS_BOOK + ".json";
+		Gson gson = new Gson();
+		String json = gson.toJson(contactList);
+		FileWriter writer = new FileWriter(SAMPLE_JSON_FILE);
+		writer.write(json);
+		writer.close();
+	}
+	
+	// read from JSON file
+	public void readFromJsonFile() throws IOException {
+		String SAMPLE_JSON_FILE = JSON_FILE_ADDRESS_BOOK + ".json";
+		Gson gson = new Gson();
+
+		BufferedReader br = new BufferedReader(new FileReader(SAMPLE_JSON_FILE));
+		ContactDetails[] contact = gson.fromJson(br, ContactDetails[].class);
+		List<ContactDetails> contactList = Arrays.asList(contact);
+		for (ContactDetails a : contactList) {
+			System.out.println("Firstname : " + a.firstName);
+			System.out.println("Lastname : " + a.lastName);
+			System.out.println("Address : " + a.address);
+			System.out.println("City : " + a.city);
+			System.out.println("State : " + a.state);
+			System.out.println("Zip : " + a.zip);
+			System.out.println("Phone number : " + a.phoneNo);
+			System.out.println("Email : " + a.email);
+			System.out.println("-----------");
 		}
 	}
 }

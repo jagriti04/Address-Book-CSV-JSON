@@ -210,7 +210,7 @@ public class AddressBook {
 					+ "\nPress 3 to edit a contact \nPress 4 to delete a contact"
 					+ " \nPress 5 to view sorted address book \nPress 6 to write contact to file"
 					+ "\nPress 7 to read from file \nPress 8 to write to CSV \nPress 9 to read from CSV"
-					+ " \nPress 10 to exit");
+					+ " \nPress 10 to write to JSON file \nPress 11 to read from JSON file" + " \nPress 12 to exit");
 			int ch = userInput.nextInt();
 
 			switch (ch) {
@@ -265,6 +265,16 @@ public class AddressBook {
 				break;
 
 			case 10:
+				System.out.println("----- Writing to JSON --- ");
+				addFileIO.writeToJsonFile(contactDetailList);
+				break;
+
+			case 11:
+				System.out.println("------ Reading from JSON ----");
+				addFileIO.readFromJsonFile();
+				break;
+
+			case 12:
 				System.out.println("exit");
 				runLoop = false;
 				break;
