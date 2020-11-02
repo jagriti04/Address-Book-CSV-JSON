@@ -61,9 +61,9 @@ public class AddressBook {
 		System.out.println("Enter the state:");
 		String state = input.nextLine();
 		System.out.println("zip");
-		long zip = input.nextLong();
+		String zip = input.nextLine();
 		System.out.println("Enter the phone no:");
-		long phoneNo = input.nextLong();
+		String phoneNo = input.nextLine();
 		input.nextLine();
 		System.out.println("Enter the email:");
 		String email = input.nextLine();
@@ -160,12 +160,12 @@ public class AddressBook {
 				break;
 			case 6:
 				System.out.println("Enter new zip");
-				long zip = input.nextLong();
+				String zip = input.nextLine();
 				editContact.setZip(zip);
 				break;
 			case 7:
 				System.out.println("Enter new zip");
-				long phNum = input.nextLong();
+				String phNum = input.nextLine();
 				editContact.setPhoneNo(phNum);
 				break;
 

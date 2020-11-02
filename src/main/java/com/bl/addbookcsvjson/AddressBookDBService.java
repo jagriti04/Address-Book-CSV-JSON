@@ -2,6 +2,7 @@ package com.bl.addbookcsvjson;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -10,6 +11,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AddressBookDBService {
+
+	private PreparedStatement contactsDataStatement;
+	private static AddressBookDBService addressBookDBService;
+
+	public AddressBookDBService() {
+
+	}
+
+	public static AddressBookDBService getInstance() {
+		if (addressBookDBService == null) {
+			addressBookDBService = new AddressBookDBService();
+		}
+		return addressBookDBService;
+	}
 
 	private Connection getConnection() throws SQLException {
 		String jdbcURl = "jdbc:mysql://localhost:3306/address_book_service?useSSL=false";
@@ -32,8 +47,8 @@ public class AddressBookDBService {
 		}
 		return addressBookList.size();
 	}
-	
-	public long readContactDetailsTable() {
+
+	public List<ContactDetails> readContactDetailsTable() {
 		String sql = "SELECT * FROM contact_details;";
 		List<ContactDetails> contactsList = new ArrayList<>();
 		try (Connection connection = this.getConnection()) {
@@ -43,7 +58,7 @@ public class AddressBookDBService {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return contactsList.size();
+		return contactsList;
 	}
 
 	private List<String> getAddressBookData(ResultSet resultSet) {
@@ -70,8 +85,8 @@ public class AddressBookDBService {
 				String address = resultSet.getString("address");
 				String city = resultSet.getString("city");
 				String state = resultSet.getString("state");
-				long zip = Long.parseLong(resultSet.getString("zip"));
-				long phoneNo = Long.parseLong(resultSet.getString("phone"));
+				String zip = resultSet.getString("zip");
+				String phoneNo = resultSet.getString("phone");
 				String email = resultSet.getString("email");
 				contactsDataList.add(new ContactDetails(id, fName, lName, address, city, state, zip, phoneNo, email));
 			}
@@ -79,6 +94,42 @@ public class AddressBookDBService {
 			e.printStackTrace();
 		}
 		return contactsDataList;
+	}
+
+	public int updateEmployeeData(String contactName, String email) {
+		String sql = String.format("update contact_details set email = '%s' where first_name = '%s';", email,
+				contactName);
+		try (Connection connection = this.getConnection()) {
+			Statement statement = connection.createStatement();
+			return statement.executeUpdate(sql);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+
+	public List<ContactDetails> getContactsData(String contactName) {
+		List<ContactDetails> contactDataList = null;
+		if (this.contactsDataStatement == null)
+			this.prepareStatementForContactData();
+		try {
+			contactsDataStatement.setString(1, contactName);
+			ResultSet resultSet = contactsDataStatement.executeQuery();
+			contactDataList = this.getContactsData(resultSet);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return contactDataList;
+	}
+
+	private void prepareStatementForContactData() {
+		try {
+			Connection conn = this.getConnection();
+			String sql = "SELECT * FROM contact_details where first_name = ?";
+			contactsDataStatement = conn.prepareStatement(sql);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

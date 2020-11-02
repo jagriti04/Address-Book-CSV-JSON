@@ -17,7 +17,8 @@ public class AddressBookManage {
 	public List<String> valuePrinted;
 	private int countPerson;
 	private AddressBookDBService addressBookDBService = new AddressBookDBService();
-
+	private List<ContactDetails> contactsList = new ArrayList<ContactDetails>();
+	
 	public AddressBookManage() {
 		nameToAddressBookMap = new HashMap<>();
 		valuePrinted = new ArrayList<>();
@@ -27,7 +28,8 @@ public class AddressBookManage {
 		nameToAddressBookMap.put(addBookName, addBook);
 	}
 
-	public boolean createAddBooks(Scanner input) throws IOException, CsvDataTypeMismatchException, CsvRequiredFieldEmptyException {
+	public boolean createAddBooks(Scanner input)
+			throws IOException, CsvDataTypeMismatchException, CsvRequiredFieldEmptyException {
 		System.out.println("Enter the num of address books to create");
 		int num = input.nextInt();
 		input.nextLine();
@@ -76,17 +78,40 @@ public class AddressBookManage {
 
 	}
 
-	// database reading 
+	// database reading
 	public long getAddressBookDataFromDB() {
 		long count = addressBookDBService.readAddressBookDB();
 		return count;
 	}
 
 	public long getContactsDataFromDB() {
-		return addressBookDBService.readContactDetailsTable();
+		contactsList = addressBookDBService.readContactDetailsTable();
+		return contactsList.size();
+	}
+
+	private ContactDetails getContactsData(String contactName) {
+		return this.contactsList.stream().filter(contact -> contact.getFirstName().equals(contactName))
+				.findFirst().orElse(null);
 	}
 	
-	public static void main(String[] args) throws IOException, CsvDataTypeMismatchException, CsvRequiredFieldEmptyException {
+	public void updateContactEmail(String contactName, String email) {
+		int result = addressBookDBService.updateEmployeeData(contactName, email);
+		if (result == 0)
+			return;
+		ContactDetails contactsData = this.getContactsData(contactName);
+		if (contactsData != null)
+			contactsData.setEmail(email);
+
+	}
+
+	// match local array and data from db after updating
+	public boolean checkAddressBookContactsInSyncWithDB(String contactName) {
+		List<ContactDetails> contactDataList = addressBookDBService.getContactsData(contactName);
+		return contactDataList.get(0).equals(getContactsData(contactName));
+	}
+
+	public static void main(String[] args)
+			throws IOException, CsvDataTypeMismatchException, CsvRequiredFieldEmptyException {
 		Scanner userInput = new Scanner(System.in);
 		System.out.println("welcome and create address books ");
 		AddressBookManage addBookManage = new AddressBookManage();

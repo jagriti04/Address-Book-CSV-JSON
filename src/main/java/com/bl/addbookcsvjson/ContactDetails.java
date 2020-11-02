@@ -9,10 +9,10 @@ public class ContactDetails {
 	public String firstName, lastName, address, city, state, email;
 
 	@CsvBindByName
-	public long zip;
+	public String zip;
 
 	@CsvBindByName
-	public long phoneNo;
+	public String phoneNo;
 
 	public String getFirstName() {
 		return firstName;
@@ -62,25 +62,25 @@ public class ContactDetails {
 		this.email = email;
 	}
 
-	public long getZip() {
+	public String getZip() {
 		return zip;
 	}
 
-	public void setZip(long zip) {
+	public void setZip(String zip) {
 		this.zip = zip;
 	}
 
-	public long getPhoneNo() {
+	public String getPhoneNo() {
 		return phoneNo;
 	}
 
-	public void setPhoneNo(long phoneNo) {
+	public void setPhoneNo(String phoneNo) {
 		this.phoneNo = phoneNo;
 	}
 	
 	public ContactDetails() { }
 	
-	public ContactDetails(String fName, String lName, String address, String city, String state, long zip, long phoneNo,
+	public ContactDetails(String fName, String lName, String address, String city, String state, String zip, String phoneNo,
 			String email) {
 		this.firstName = fName;
 		this.lastName = lName;
@@ -92,7 +92,7 @@ public class ContactDetails {
 		this.email = email;
 	}
 	
-	public ContactDetails(int id, String fName, String lName, String address, String city, String state, long zip, long phoneNo,
+	public ContactDetails(int id, String fName, String lName, String address, String city, String state, String zip, String phoneNo,
 			String email) {
 		this(fName, lName, address, city, state, zip, phoneNo, email);
 		this.contact_id = id;
@@ -102,5 +102,15 @@ public class ContactDetails {
 	public String toString() {
 		return String.format("Name: " + firstName + " " + lastName + ", Address: " + address + ", City: " + city
 				+ ", State: " + state + ", zip " + zip + ", phone no. " + phoneNo + ", EmailId: " + email);
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		ContactDetails that = (ContactDetails) o;
+		return contact_id == that.contact_id && email.equals(that.email) && firstName.equals(that.firstName);
 	}
 }
