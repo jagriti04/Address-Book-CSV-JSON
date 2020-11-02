@@ -11,13 +11,14 @@ import java.util.stream.Collectors;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
-public class AdressBookManage {
+public class AddressBookManage {
 
 	private Map<String, AddressBook> nameToAddressBookMap;
 	public List<String> valuePrinted;
 	private int countPerson;
+	private AddressBookDBService addressBookDBService = new AddressBookDBService();
 
-	public AdressBookManage() {
+	public AddressBookManage() {
 		nameToAddressBookMap = new HashMap<>();
 		valuePrinted = new ArrayList<>();
 	}
@@ -75,10 +76,16 @@ public class AdressBookManage {
 
 	}
 
+	// database reading 
+	public long getAddressBookDataFromDB() {
+		long count = addressBookDBService.readAddressBookDB();
+		return count;
+	}
+	
 	public static void main(String[] args) throws IOException, CsvDataTypeMismatchException, CsvRequiredFieldEmptyException {
 		Scanner userInput = new Scanner(System.in);
 		System.out.println("welcome and create address books ");
-		AdressBookManage addBookManage = new AdressBookManage();
+		AddressBookManage addBookManage = new AddressBookManage();
 		boolean created = addBookManage.createAddBooks(userInput);
 		System.out.println("Successfully created address books");
 		addBookManage.viewAddBooks();
