@@ -81,6 +81,10 @@ public class AddressBookManage {
 		long count = addressBookDBService.readAddressBookDB();
 		return count;
 	}
+
+	public long getContactsDataFromDB() {
+		return addressBookDBService.readContactDetailsTable();
+	}
 	
 	public static void main(String[] args) throws IOException, CsvDataTypeMismatchException, CsvRequiredFieldEmptyException {
 		Scanner userInput = new Scanner(System.in);
@@ -114,4 +118,5 @@ public class AddressBookManage {
 		}
 		System.out.println("Number of persons found = " + addBookManage.countPerson);
 	}
+
 }

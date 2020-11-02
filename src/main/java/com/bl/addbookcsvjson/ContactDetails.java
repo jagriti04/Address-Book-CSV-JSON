@@ -3,6 +3,8 @@ package com.bl.addbookcsvjson;
 import com.opencsv.bean.CsvBindByName;
 
 public class ContactDetails {
+	public int contact_id;
+	
 	@CsvBindByName
 	public String firstName, lastName, address, city, state, email;
 
@@ -88,6 +90,12 @@ public class ContactDetails {
 		this.zip = zip;
 		this.phoneNo = phoneNo;
 		this.email = email;
+	}
+	
+	public ContactDetails(int id, String fName, String lName, String address, String city, String state, long zip, long phoneNo,
+			String email) {
+		this(fName, lName, address, city, state, zip, phoneNo, email);
+		this.contact_id = id;
 	}
 
 	@Override

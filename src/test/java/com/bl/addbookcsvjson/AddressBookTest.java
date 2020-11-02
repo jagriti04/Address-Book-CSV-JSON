@@ -19,4 +19,10 @@ public class AddressBookTest {
 		long countEntries = addressBookService.getAddressBookDataFromDB();
 		Assert.assertEquals(1, countEntries);
 	}
+	
+	@Test
+	public void givenAddressBookInDB_whenContactsRetrieved_ShouldMatchContactsCount() {
+		long countEntries = addressBookService.getContactsDataFromDB();
+		Assert.assertEquals(7, countEntries);
+	}
 }
