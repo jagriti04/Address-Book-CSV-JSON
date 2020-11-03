@@ -99,6 +99,11 @@ public class AddressBookManage {
 		return this.contactsList;
 	}
 
+	public List<ContactDetails> getContactsByCity(String city) {
+		this.contactsList = addressBookDBService.getContactsDataByCity(city);
+		return this.contactsList;
+	}
+
 	public void updateContactEmail(String contactName, String email) {
 		int result = addressBookDBService.updateEmployeeData(contactName, email);
 		if (result == 0)

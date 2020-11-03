@@ -122,6 +122,20 @@ public class AddressBookDBService {
 		return contactDataList;
 	}
 
+	public List<ContactDetails> getContactsDataByCity(String city) {
+		List<ContactDetails> contactDataList = null;
+		try {
+			Connection connection = this.getConnection();
+			String sql = String.format("SELECT * FROM contact_details where city='%s';", city);
+			Statement statement = connection.createStatement();
+			ResultSet resultSet = statement.executeQuery(sql);
+			contactDataList = getContactsData(resultSet);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return contactDataList;
+	}
+
 	public List<ContactDetails> getContactsWithStartDateInGivenRange(String startDate, String endDate) {
 		List<ContactDetails> contactsDataList = new ArrayList<>();
 
@@ -149,5 +163,4 @@ public class AddressBookDBService {
 			e.printStackTrace();
 		}
 	}
-
 }
