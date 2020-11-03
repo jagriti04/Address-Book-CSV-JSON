@@ -103,6 +103,11 @@ public class AddressBookManage {
 		this.contactsList = addressBookDBService.getContactsDataByCity(city);
 		return this.contactsList;
 	}
+	
+	public List<ContactDetails> getContactsByState(String state) {
+		this.contactsList = addressBookDBService.getContactsDataByState(state);
+		return this.contactsList;
+	}
 
 	public void updateContactEmail(String contactName, String email) {
 		int result = addressBookDBService.updateEmployeeData(contactName, email);
