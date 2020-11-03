@@ -1,6 +1,7 @@
 package com.bl.addbookcsvjson;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -89,40 +90,46 @@ public class AddressBookManage {
 		return contactsList.size();
 	}
 
-	private ContactDetails getContactsData(String contactName) {
+	private ContactDetails getContactsDataFromDB(String contactName) {
 		return this.contactsList.stream().filter(contact -> contact.getFirstName().equals(contactName)).findFirst()
 				.orElse(null);
 	}
 
-	public List<ContactDetails> getContactsByDateRange(String start, String end) {
+	public List<ContactDetails> getContactsByDateRangeFromDB(String start, String end) {
 		this.contactsList = addressBookDBService.getContactsWithStartDateInGivenRange(start, end);
 		return this.contactsList;
 	}
 
-	public List<ContactDetails> getContactsByCity(String city) {
+	public List<ContactDetails> getContactsByCityFromDB(String city) {
 		this.contactsList = addressBookDBService.getContactsDataByCity(city);
 		return this.contactsList;
 	}
-	
-	public List<ContactDetails> getContactsByState(String state) {
+
+	public List<ContactDetails> getContactsByStateFromDB(String state) {
 		this.contactsList = addressBookDBService.getContactsDataByState(state);
 		return this.contactsList;
 	}
 
-	public void updateContactEmail(String contactName, String email) {
+	public void updateContactEmailInDB(String contactName, String email) {
 		int result = addressBookDBService.updateEmployeeData(contactName, email);
 		if (result == 0)
 			return;
-		ContactDetails contactsData = this.getContactsData(contactName);
+		ContactDetails contactsData = this.getContactsDataFromDB(contactName);
 		if (contactsData != null)
 			contactsData.setEmail(email);
 
 	}
 
+	public void addContactsDetailsInDB(String addressBookName, String fName, String lName, String address, String city,
+			String state, String zip, String phoneNo, String email, String contactAddedDate, String contactType) {
+		this.contactsList.add(addressBookDBService.addContactDetailsInDB(addressBookName, fName, lName, address, city,
+				state, zip, phoneNo, email, contactAddedDate, contactType));
+	}
+
 	// match local array and data from db after updating
 	public boolean checkAddressBookContactsInSyncWithDB(String contactName) {
 		List<ContactDetails> contactDataList = addressBookDBService.getContactsData(contactName);
-		return contactDataList.get(0).equals(getContactsData(contactName));
+		return contactDataList.get(0).equals(getContactsDataFromDB(contactName));
 	}
 
 	public static void main(String[] args)
@@ -158,5 +165,4 @@ public class AddressBookManage {
 		}
 		System.out.println("Number of persons found = " + addBookManage.countPerson);
 	}
-
 }

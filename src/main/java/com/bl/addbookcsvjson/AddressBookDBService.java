@@ -1,6 +1,7 @@
 package com.bl.addbookcsvjson;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -135,7 +136,7 @@ public class AddressBookDBService {
 		}
 		return contactDataList;
 	}
-	
+
 	public List<ContactDetails> getContactsDataByState(String state) {
 		List<ContactDetails> contactDataList = null;
 		try {
@@ -178,5 +179,85 @@ public class AddressBookDBService {
 		}
 	}
 
+	public ContactDetails addContactDetailsInDB(String addressBookName, String fName, String lName, String address,
+			String city, String state, String zip, String phoneNo, String email, String contactAddedDate,
+			String contactType) {
+		int contactDetailsId = -1;
+		int addressBookId = -1;
+		ContactDetails contactsData = null;
+		Connection connection = null;
+		try {
+			connection = this.getConnection();
+			connection.setAutoCommit(false);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		try (Statement statement = connection.createStatement()) {
+			String sql = String.format("INSERT INTO address_book(address_book_name)" + "VALUES ('%s')",
+					addressBookName);
+			int rowAffected = statement.executeUpdate(sql, statement.RETURN_GENERATED_KEYS);
+			if (rowAffected == 1) {
+				ResultSet resultSet = statement.getGeneratedKeys();
+				if (resultSet.next())
+					addressBookId = resultSet.getInt(1);
+			}
 
+		} catch (SQLException e) {
+			e.printStackTrace();
+			try {
+				connection.rollback();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+		}
+		try (Statement statement = connection.createStatement()) {
+			String sql = String.format(
+					"INSERT INTO contact_details(first_name, last_name, address, city, state, zip, phone, email, start)"
+							+ "VALUES ('%s','%s','%s','%s','%s','%s','%s','%s','%s')",
+					fName, lName, address, city, state, zip, phoneNo, email, contactAddedDate);
+			int rowAffected = statement.executeUpdate(sql, statement.RETURN_GENERATED_KEYS);
+			if (rowAffected == 1) {
+				ResultSet resultSet = statement.getGeneratedKeys();
+				if (resultSet.next())
+					contactDetailsId = resultSet.getInt(1);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			try {
+				connection.rollback();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+		}
+		try (Statement statement = connection.createStatement()) {
+			String sql = String.format(
+					"INSERT INTO contact_type(address_book_id, contact_type, contact_id)" + "VALUES ('%s','%s','%s')",
+					addressBookId, contactType, contactDetailsId);
+			int rowAffected = statement.executeUpdate(sql, statement.RETURN_GENERATED_KEYS);
+			if (rowAffected == 1) {
+				ResultSet resultSet = statement.getGeneratedKeys();
+				if (resultSet.next())
+					contactDetailsId = resultSet.getInt(1);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			try {
+				connection.rollback();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+		}
+		try {
+			connection.commit();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				connection.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return contactsData;
+	}
 }
