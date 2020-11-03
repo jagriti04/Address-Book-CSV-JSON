@@ -18,7 +18,7 @@ public class AddressBookManage {
 	private int countPerson;
 	private AddressBookDBService addressBookDBService = new AddressBookDBService();
 	private List<ContactDetails> contactsList = new ArrayList<ContactDetails>();
-	
+
 	public AddressBookManage() {
 		nameToAddressBookMap = new HashMap<>();
 		valuePrinted = new ArrayList<>();
@@ -90,10 +90,15 @@ public class AddressBookManage {
 	}
 
 	private ContactDetails getContactsData(String contactName) {
-		return this.contactsList.stream().filter(contact -> contact.getFirstName().equals(contactName))
-				.findFirst().orElse(null);
+		return this.contactsList.stream().filter(contact -> contact.getFirstName().equals(contactName)).findFirst()
+				.orElse(null);
 	}
-	
+
+	public List<ContactDetails> getContactsByDateRange(String start, String end) {
+		this.contactsList = addressBookDBService.getContactsWithStartDateInGivenRange(start, end);
+		return this.contactsList;
+	}
+
 	public void updateContactEmail(String contactName, String email) {
 		int result = addressBookDBService.updateEmployeeData(contactName, email);
 		if (result == 0)

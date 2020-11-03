@@ -122,6 +122,24 @@ public class AddressBookDBService {
 		return contactDataList;
 	}
 
+	public List<ContactDetails> getContactsWithStartDateInGivenRange(String startDate, String endDate) {
+		List<ContactDetails> contactsDataList = new ArrayList<>();
+
+		try {
+			Connection connection = this.getConnection();
+			String sql = String.format(
+					"SELECT * FROM contact_details where start BETWEEN CAST('%s' AS DATE) and CAST('%s' AS DATE);",
+					startDate, endDate);
+			Statement statement = connection.createStatement();
+			ResultSet resultSet = statement.executeQuery(sql);
+			contactsDataList = getContactsData(resultSet);
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return contactsDataList;
+	}
+
 	private void prepareStatementForContactData() {
 		try {
 			Connection conn = this.getConnection();

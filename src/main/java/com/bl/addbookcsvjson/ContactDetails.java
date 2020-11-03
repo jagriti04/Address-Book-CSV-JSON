@@ -1,9 +1,12 @@
 package com.bl.addbookcsvjson;
 
+import java.time.LocalDate;
+
 import com.opencsv.bean.CsvBindByName;
 
 public class ContactDetails {
-	public int contact_id;
+	public int contactId;
+	public LocalDate contactAddedDate;
 	
 	@CsvBindByName
 	public String firstName, lastName, address, city, state, email;
@@ -95,7 +98,13 @@ public class ContactDetails {
 	public ContactDetails(int id, String fName, String lName, String address, String city, String state, String zip, String phoneNo,
 			String email) {
 		this(fName, lName, address, city, state, zip, phoneNo, email);
-		this.contact_id = id;
+		this.contactId = id;
+	}
+	
+	public ContactDetails(int id, String fName, String lName, String address, String city, String state, String zip, String phoneNo,
+			String email, LocalDate contactAddedDate) {
+		this(id, fName, lName, address, city, state, zip, phoneNo, email);
+		this.contactAddedDate = contactAddedDate;
 	}
 
 	@Override
@@ -111,6 +120,6 @@ public class ContactDetails {
 		if (o == null || getClass() != o.getClass())
 			return false;
 		ContactDetails that = (ContactDetails) o;
-		return contact_id == that.contact_id && email.equals(that.email) && firstName.equals(that.firstName);
+		return contactId == that.contactId && email.equals(that.email) && firstName.equals(that.firstName);
 	}
 }
