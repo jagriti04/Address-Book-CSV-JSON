@@ -1,5 +1,7 @@
 package com.bl.addbookcsvjson;
 
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,5 +33,15 @@ public class AddressBookTest {
 		addressBookService.updateContactEmail("Jag", "qwerty@1223.com");
 		boolean result = addressBookService.checkAddressBookContactsInSyncWithDB("Jag");
 		Assert.assertTrue(result);
+	}
+	
+	//contacts in given date range
+	@Test
+	public void givenDataRange_shouldReturnContactsFromDBAddedInDateRange() {
+		addressBookService.getContactsDataFromDB();
+		String start = "2019-01-01";
+		String end = "2020-01-05";
+		List<ContactDetails> contactsDataList = addressBookService.getContactsByDateRange(start, end);
+		Assert.assertEquals(2, contactsDataList.size());
 	}
 }
