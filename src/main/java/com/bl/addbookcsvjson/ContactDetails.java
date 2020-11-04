@@ -1,21 +1,12 @@
 package com.bl.addbookcsvjson;
 
 import java.time.LocalDate;
-
-import com.opencsv.bean.CsvBindByName;
+import java.util.Objects;
 
 public class ContactDetails {
 	public int contactId;
 	public LocalDate contactAddedDate;
-	
-	@CsvBindByName
-	public String firstName, lastName, address, city, state, email;
-
-	@CsvBindByName
-	public String zip;
-
-	@CsvBindByName
-	public String phoneNo;
+	public String firstName, lastName, address, city, state, email, zip, phoneNo, contactType;
 
 	public String getFirstName() {
 		return firstName;
@@ -80,11 +71,12 @@ public class ContactDetails {
 	public void setPhoneNo(String phoneNo) {
 		this.phoneNo = phoneNo;
 	}
-	
-	public ContactDetails() { }
-	
-	public ContactDetails(String fName, String lName, String address, String city, String state, String zip, String phoneNo,
-			String email) {
+
+	public ContactDetails() {
+	}
+
+	public ContactDetails(String fName, String lName, String address, String city, String state, String zip,
+			String phoneNo, String email) {
 		this.firstName = fName;
 		this.lastName = lName;
 		this.address = address;
@@ -94,17 +86,23 @@ public class ContactDetails {
 		this.phoneNo = phoneNo;
 		this.email = email;
 	}
-	
-	public ContactDetails(int id, String fName, String lName, String address, String city, String state, String zip, String phoneNo,
-			String email) {
+
+	public ContactDetails(int id, String fName, String lName, String address, String city, String state, String zip,
+			String phoneNo, String email) {
 		this(fName, lName, address, city, state, zip, phoneNo, email);
 		this.contactId = id;
 	}
-	
-	public ContactDetails(int id, String fName, String lName, String address, String city, String state, String zip, String phoneNo,
-			String email, LocalDate contactAddedDate) {
+
+	public ContactDetails(int id, String fName, String lName, String address, String city, String state, String zip,
+			String phoneNo, String email, LocalDate contactAddedDate) {
 		this(id, fName, lName, address, city, state, zip, phoneNo, email);
 		this.contactAddedDate = contactAddedDate;
+	}
+
+	public ContactDetails(int id, String fName, String lName, String address, String city, String state, String zip,
+			String phoneNo, String email, String contactType) {
+		this(id, fName, lName, address, city, state, zip, phoneNo, email);
+		this.contactType = contactType;
 	}
 
 	@Override
@@ -112,7 +110,12 @@ public class ContactDetails {
 		return String.format("Name: " + firstName + " " + lastName + ", Address: " + address + ", City: " + city
 				+ ", State: " + state + ", zip " + zip + ", phone no. " + phoneNo + ", EmailId: " + email);
 	}
-	
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(firstName, lastName, address, city, state, zip, phoneNo, email);
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o)

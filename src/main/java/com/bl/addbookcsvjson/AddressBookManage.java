@@ -132,6 +132,35 @@ public class AddressBookManage {
 		return contactDataList.get(0).equals(getContactsDataFromDB(contactName));
 	}
 
+	// Multithreading
+	public void addContactsDetailsInDBWithThreads(String addBookName, List<ContactDetails> contactList) {
+		Map<Integer, Boolean> contactsAdditionStatus = new HashMap<Integer, Boolean>();
+		contactList.forEach(contacts -> {
+			Runnable task = () -> {
+				contactsAdditionStatus.put(contacts.hashCode(), false);
+				System.out.println("Contact being added: " + Thread.currentThread().getName());
+				this.addContactsDetailsInDB(addBookName, contacts.firstName, contacts.lastName, contacts.address,
+						contacts.city, contacts.state, contacts.zip, contacts.phoneNo, contacts.email, "2020-11-05",
+						contacts.contactType);
+				contactsAdditionStatus.put(contacts.hashCode(), true);
+				System.out.println("Contact added: " + Thread.currentThread().getName());
+			};
+			Thread thread = new Thread(task, contacts.getFirstName());
+			thread.start();
+		});
+		while (contactsAdditionStatus.containsValue(false)) {
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public Object countEntries() {
+		return this.contactsList.size();
+	}
+
 	public static void main(String[] args)
 			throws IOException, CsvDataTypeMismatchException, CsvRequiredFieldEmptyException {
 		Scanner userInput = new Scanner(System.in);
@@ -165,4 +194,5 @@ public class AddressBookManage {
 		}
 		System.out.println("Number of persons found = " + addBookManage.countPerson);
 	}
+
 }
