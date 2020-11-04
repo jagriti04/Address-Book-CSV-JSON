@@ -1,6 +1,9 @@
 package com.bl.addbookcsvjson;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Assert;
@@ -18,13 +21,13 @@ public class AddressBookTest {
 	@Test
 	public void givenAddressBookInDB_whenRetrieved_shouldMatchBooksCount() {
 		long countEntries = addressBookService.getAddressBookDataFromDB();
-		Assert.assertEquals(6, countEntries);
+		Assert.assertEquals(13, countEntries);
 	}
 
 	@Test
 	public void givenAddressBookInDB_whenContactsRetrieved_shouldMatchContactsCount() {
 		long countEntries = addressBookService.getContactsDataFromDB();
-		Assert.assertEquals(13, countEntries);
+		Assert.assertEquals(20, countEntries);
 	}
 
 	// Update contact info
@@ -76,4 +79,22 @@ public class AddressBookTest {
 		Assert.assertTrue(result);
 	}
 
+	// Add multiple contacts
+	@Test
+	public void givenDataForMultipleContacts_whenAdded_shouldBeInSyncWithDB() {
+		addressBookService.getContactsDataFromDB();
+		String addressBookName = "LocalBook";
+		ContactDetails[] arrayOfContacts = {
+				new ContactDetails(0, "Shaam", "Mohan", "India", "Mumbai", "MH", "100222", "12365470085",
+						"Shyam@123.com", "Family"),
+				new ContactDetails(0, "Pinky", "Mohan", "India", "Pune", "MH", "560222", "12365470085", "pinky@123.com",
+						"Friend"),
+				new ContactDetails(0, "Sita", "Shakti", "India", "Kota", "Rajasthan", "0213245", "000470085",
+						"Sita@123.com", "Office") };
+		Instant threadStart = Instant.now();
+		addressBookService.addContactsDetailsInDBWithThreads(addressBookName, Arrays.asList(arrayOfContacts));
+		Instant threadEnd = Instant.now();
+		System.out.println("Duration with Thread: " + Duration.between(threadStart, threadEnd));
+		Assert.assertEquals(11, addressBookService.countEntries());
+	}
 }
