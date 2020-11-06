@@ -166,6 +166,11 @@ public class AddressBookManage {
 		return this.contactsList.size();
 	}
 
+	// JSON server
+	public void addContactDetailsJSONServer(ContactDetails contact) {
+		this.contactsList.add(contact);
+	}
+
 	public static void main(String[] args)
 			throws IOException, CsvDataTypeMismatchException, CsvRequiredFieldEmptyException {
 		Scanner userInput = new Scanner(System.in);
