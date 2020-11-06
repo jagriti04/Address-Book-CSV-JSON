@@ -3,9 +3,13 @@ package com.bl.addbookcsvjson;
 import java.time.LocalDate;
 import java.util.Objects;
 
+import com.opencsv.bean.CsvBindByName;
+
 public class ContactDetails {
 	public int contactId;
 	public LocalDate contactAddedDate;
+	
+	@CsvBindByName
 	public String firstName, lastName, address, city, state, email, zip, phoneNo, contactType;
 
 	public String getFirstName() {

@@ -25,6 +25,11 @@ public class AddressBookManage {
 		valuePrinted = new ArrayList<>();
 	}
 
+	public AddressBookManage(List<ContactDetails> contactsList) {
+		this();
+		this.contactsList = contactsList;
+	}
+
 	public void addAddressBook(String addBookName, AddressBook addBook) {
 		nameToAddressBookMap.put(addBookName, addBook);
 	}
@@ -157,7 +162,7 @@ public class AddressBookManage {
 		}
 	}
 
-	public Object countEntries() {
+	public long countEntries() {
 		return this.contactsList.size();
 	}
 
