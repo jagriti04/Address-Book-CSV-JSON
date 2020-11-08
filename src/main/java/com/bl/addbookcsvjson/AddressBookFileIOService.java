@@ -27,9 +27,9 @@ public class AddressBookFileIOService {
 	public static String FILE_ADDRESS_BOOK = "address-book-file";
 	public static String CSV_FILE_ADDRESS_BOOK = "address-book-csv";
 	public static String JSON_FILE_ADDRESS_BOOK = "address-book-json";
-	
+
 	// function to write to the file
-	public void writeToFile(ArrayList<ContactDetails> contactList) throws IOException {
+	public void writeToFile(ArrayList<ContactDetails> contactList) throws IOException, AddressBookException {
 		Path filePath = Paths.get(FILE_ADDRESS_BOOK + ".txt");
 		if (Files.notExists(filePath))
 			Files.createFile(filePath);
@@ -43,18 +43,20 @@ public class AddressBookFileIOService {
 			Files.write(filePath, addressBookBuffer.toString().getBytes());
 		} catch (IOException e) {
 			e.printStackTrace();
+			throw new AddressBookException(e.getMessage(), AddressBookException.ExceptionType.FILE_WRITE_ERROR);
 		}
 
 	}
 
 	// function to read from the file
-	public void readFromFile() throws IOException {
+	public void readFromFile() throws IOException, AddressBookException {
 		Path filePath = Paths.get(FILE_ADDRESS_BOOK + ".txt");
 		try {
 			System.out.println("The contact details in the address book file are : ");
 			Files.lines(filePath).map(line -> line.trim()).forEach(line -> System.out.println(line));
 		} catch (IOException e) {
 			e.printStackTrace();
+			throw new AddressBookException(e.getMessage(), AddressBookException.ExceptionType.FILE_READ_ERROR);
 		}
 	}
 
@@ -62,26 +64,22 @@ public class AddressBookFileIOService {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void writeToCSVFile(ArrayList<ContactDetails> contactList)
 			throws IOException, CsvDataTypeMismatchException, CsvRequiredFieldEmptyException {
-
 		Path filePath = Paths.get(CSV_FILE_ADDRESS_BOOK + ".csv");
 		if (Files.notExists(filePath))
 			Files.createFile(filePath);
-
 		try (Writer writer = Files.newBufferedWriter(Paths.get(filePath.toUri()));) {
 			StatefulBeanToCsv<ContactDetails> beanToCsv = new StatefulBeanToCsvBuilder(writer)
 					.withQuotechar(CSVWriter.NO_QUOTE_CHARACTER).build();
 			beanToCsv.write(contactList);
-
 		}
-
 	}
-	
+
 	// function to read from CSV file
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void readFromCSVFile() throws IOException {
 		Path filePath = Paths.get(CSV_FILE_ADDRESS_BOOK + ".csv");
 		try (Reader reader = Files.newBufferedReader(Paths.get(filePath.toUri()));) {
-			
+
 			CsvToBean<ContactDetails> csvToBean = new CsvToBeanBuilder(reader).withType(ContactDetails.class)
 					.withIgnoreLeadingWhiteSpace(true).build();
 
@@ -101,7 +99,7 @@ public class AddressBookFileIOService {
 			}
 		}
 	}
-	
+
 	// write to json file
 	public void writeToJsonFile(ArrayList<ContactDetails> contactList) throws IOException {
 		String SAMPLE_JSON_FILE = JSON_FILE_ADDRESS_BOOK + ".json";
@@ -111,7 +109,7 @@ public class AddressBookFileIOService {
 		writer.write(json);
 		writer.close();
 	}
-	
+
 	// read from JSON file
 	public void readFromJsonFile() throws IOException {
 		String SAMPLE_JSON_FILE = JSON_FILE_ADDRESS_BOOK + ".json";

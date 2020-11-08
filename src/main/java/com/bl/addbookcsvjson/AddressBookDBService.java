@@ -36,7 +36,8 @@ public class AddressBookDBService {
 		return con;
 	}
 
-	public long readAddressBookDB() {
+	// get address book data from db
+	public long readAddressBookDB() throws AddressBookException {
 		String sql = "SELECT * FROM address_book;";
 		List<String> addressBookList = new ArrayList<>();
 		try (Connection connection = this.getConnection()) {
@@ -45,11 +46,14 @@ public class AddressBookDBService {
 			addressBookList = this.getAddressBookData(resultSet);
 		} catch (SQLException e) {
 			e.printStackTrace();
+			throw new AddressBookException(e.getMessage(),
+					AddressBookException.ExceptionType.SQL_QUERY_EXECUTION_ERROR);
 		}
 		return addressBookList.size();
 	}
 
-	public List<ContactDetails> readContactDetailsTable() {
+	// get contact details from db
+	public List<ContactDetails> readContactDetailsTable() throws AddressBookException {
 		String sql = "SELECT * FROM contact_details;";
 		List<ContactDetails> contactsList = new ArrayList<>();
 		try (Connection connection = this.getConnection()) {
@@ -58,6 +62,8 @@ public class AddressBookDBService {
 			contactsList = this.getContactsData(resultSet);
 		} catch (SQLException e) {
 			e.printStackTrace();
+			throw new AddressBookException(e.getMessage(),
+					AddressBookException.ExceptionType.SQL_QUERY_EXECUTION_ERROR);
 		}
 		return contactsList;
 	}
@@ -97,7 +103,8 @@ public class AddressBookDBService {
 		return contactsDataList;
 	}
 
-	public int updateEmployeeData(String contactName, String email) {
+	// update the email of a contact
+	public int updateEmployeeData(String contactName, String email) throws AddressBookException {
 		String sql = String.format("update contact_details set email = '%s' where first_name = '%s';", email,
 				contactName);
 		try (Connection connection = this.getConnection()) {
@@ -105,11 +112,12 @@ public class AddressBookDBService {
 			return statement.executeUpdate(sql);
 		} catch (SQLException e) {
 			e.printStackTrace();
+			throw new AddressBookException(e.getMessage(),
+					AddressBookException.ExceptionType.SQL_QUERY_EXECUTION_ERROR);
 		}
-		return 0;
 	}
 
-	public List<ContactDetails> getContactsData(String contactName) {
+	public List<ContactDetails> getContactsData(String contactName) throws AddressBookException {
 		List<ContactDetails> contactDataList = null;
 		if (this.contactsDataStatement == null)
 			this.prepareStatementForContactData();
@@ -119,43 +127,50 @@ public class AddressBookDBService {
 			contactDataList = this.getContactsData(resultSet);
 		} catch (SQLException e) {
 			e.printStackTrace();
+			throw new AddressBookException(e.getMessage(),
+					AddressBookException.ExceptionType.SQL_QUERY_EXECUTION_ERROR);
 		}
 		return contactDataList;
 	}
 
-	public List<ContactDetails> getContactsDataByCity(String city) {
+	// function for getting contact data from database if city given
+	public List<ContactDetails> getContactsDataByCity(String city) throws AddressBookException {
 		List<ContactDetails> contactDataList = null;
-		try {
-			Connection connection = this.getConnection();
+		try (Connection connection = this.getConnection()) {
 			String sql = String.format("SELECT * FROM contact_details where city='%s';", city);
 			Statement statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery(sql);
 			contactDataList = getContactsData(resultSet);
 		} catch (SQLException e) {
 			e.printStackTrace();
+			throw new AddressBookException(e.getMessage(),
+					AddressBookException.ExceptionType.SQL_QUERY_EXECUTION_ERROR);
 		}
 		return contactDataList;
 	}
 
-	public List<ContactDetails> getContactsDataByState(String state) {
+	// function for getting contact data from database if state given
+	public List<ContactDetails> getContactsDataByState(String state) throws AddressBookException {
 		List<ContactDetails> contactDataList = null;
-		try {
-			Connection connection = this.getConnection();
+		try (Connection connection = this.getConnection()) {
 			String sql = String.format("SELECT * FROM contact_details where state='%s';", state);
 			Statement statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery(sql);
 			contactDataList = getContactsData(resultSet);
 		} catch (SQLException e) {
 			e.printStackTrace();
+			throw new AddressBookException(e.getMessage(),
+					AddressBookException.ExceptionType.SQL_QUERY_EXECUTION_ERROR);
 		}
 		return contactDataList;
 	}
 
-	public List<ContactDetails> getContactsWithStartDateInGivenRange(String startDate, String endDate) {
+	// function for getting contact data from database if date range given
+	public List<ContactDetails> getContactsWithStartDateInGivenRange(String startDate, String endDate)
+			throws AddressBookException {
 		List<ContactDetails> contactsDataList = new ArrayList<>();
 
-		try {
-			Connection connection = this.getConnection();
+		try (Connection connection = this.getConnection()) {
 			String sql = String.format(
 					"SELECT * FROM contact_details where start BETWEEN CAST('%s' AS DATE) and CAST('%s' AS DATE);",
 					startDate, endDate);
@@ -165,23 +180,28 @@ public class AddressBookDBService {
 
 		} catch (SQLException e) {
 			e.printStackTrace();
+			throw new AddressBookException(e.getMessage(),
+					AddressBookException.ExceptionType.SQL_QUERY_EXECUTION_ERROR);
 		}
 		return contactsDataList;
 	}
 
-	private void prepareStatementForContactData() {
-		try {
-			Connection conn = this.getConnection();
+	// prepared statement 
+	private void prepareStatementForContactData() throws AddressBookException {
+		try (Connection conn = this.getConnection()) {
 			String sql = "SELECT * FROM contact_details where first_name = ?";
 			contactsDataStatement = conn.prepareStatement(sql);
 		} catch (SQLException e) {
 			e.printStackTrace();
+			throw new AddressBookException(e.getMessage(),
+					AddressBookException.ExceptionType.SQL_QUERY_EXECUTION_ERROR);
 		}
 	}
 
+	// add data to multiple tables database
 	public ContactDetails addContactDetailsInDB(String addressBookName, String fName, String lName, String address,
 			String city, String state, String zip, String phoneNo, String email, String contactAddedDate,
-			String contactType) {
+			String contactType) throws AddressBookException {
 		int contactDetailsId = -1;
 		int addressBookId = -1;
 		ContactDetails contactsData = null;
@@ -191,6 +211,7 @@ public class AddressBookDBService {
 			connection.setAutoCommit(false);
 		} catch (SQLException e) {
 			e.printStackTrace();
+			throw new AddressBookException(e.getMessage(), AddressBookException.ExceptionType.CONNECTION_CREATE_ERROR);
 		}
 		try (Statement statement = connection.createStatement()) {
 			String sql = String.format("INSERT INTO address_book(address_book_name)" + "VALUES ('%s')",
@@ -208,6 +229,8 @@ public class AddressBookDBService {
 				connection.rollback();
 			} catch (SQLException e1) {
 				e1.printStackTrace();
+				throw new AddressBookException(e.getMessage(),
+						AddressBookException.ExceptionType.SQL_QUERY_EXECUTION_ERROR);
 			}
 		}
 		try (Statement statement = connection.createStatement()) {
@@ -227,6 +250,8 @@ public class AddressBookDBService {
 				connection.rollback();
 			} catch (SQLException e1) {
 				e1.printStackTrace();
+				throw new AddressBookException(e.getMessage(),
+						AddressBookException.ExceptionType.SQL_QUERY_EXECUTION_ERROR);
 			}
 		}
 		try (Statement statement = connection.createStatement()) {
@@ -245,6 +270,8 @@ public class AddressBookDBService {
 				connection.rollback();
 			} catch (SQLException e1) {
 				e1.printStackTrace();
+				throw new AddressBookException(e.getMessage(),
+						AddressBookException.ExceptionType.SQL_QUERY_EXECUTION_ERROR);
 			}
 		}
 		try {
@@ -256,6 +283,8 @@ public class AddressBookDBService {
 				connection.close();
 			} catch (SQLException e) {
 				e.printStackTrace();
+				throw new AddressBookException(e.getMessage(),
+						AddressBookException.ExceptionType.CONNECTION_CLOSING_ERROR);
 			}
 		}
 		return contactsData;

@@ -24,12 +24,14 @@ public class AddressBookRestTest {
 		addressBookService = new AddressBookManage(new ArrayList<>(Arrays.asList(arrayOfContacts)));
 	}
 
+	// to get contacts from JSON server
 	private ContactDetails[] getContactsList() {
 		Response response = RestAssured.get("/contacts");
 		ContactDetails[] arrayOfContacts = new Gson().fromJson(response.asString(), ContactDetails[].class);
 		return arrayOfContacts;
 	}
 
+	// to add contacts to JSON server
 	private Response addContactToJsonServer(ContactDetails contact) {
 		String contactJson = new Gson().toJson(contact);
 		RequestSpecification request = RestAssured.given();

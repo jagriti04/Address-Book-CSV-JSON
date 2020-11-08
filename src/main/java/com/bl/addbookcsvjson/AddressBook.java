@@ -31,6 +31,7 @@ public class AddressBook {
 		stateToPersonsMap = new HashMap<>();
 	}
 
+	// function to add contact in map and list
 	public void addContacts(ContactDetails contactPerson) {
 		System.out.println("-------Adding a Contact---- " + contactPerson.firstName);
 		contactDetailList.add(contactPerson);
@@ -40,6 +41,7 @@ public class AddressBook {
 		stateToPersonsMap.computeIfAbsent(contactPerson.state, k -> new ArrayList<>()).add(contactPerson.firstName);
 	}
 
+	// to get contact details from console
 	public ContactDetails getContactInfo(Scanner input) {
 		String fName = "", lName = "";
 
@@ -104,18 +106,21 @@ public class AddressBook {
 				.peek(n -> System.out.println(n)).collect(Collectors.toList());
 	}
 
+	// get sorted by city contact list on console 
 	public void viewSortedByCity() {
 		List<ContactDetails> sortedDetailsByCity = contactDetailList.stream()
 				.sorted((ab1, ab2) -> ab1.getCity().compareTo(ab2.getCity()))
 				.peek(addBook -> System.out.println(addBook)).collect(Collectors.toList());
 	}
 
+	// get sorted by state contact list on console 
 	public void viewSortedByState() {
 		List<ContactDetails> sortedDetailsByCity = contactDetailList.stream()
 				.sorted((ab1, ab2) -> ab1.getState().compareTo(ab2.getState()))
 				.peek(addBook -> System.out.println(addBook)).collect(Collectors.toList());
 	}
 
+	// function to let users select the field they want to edit and then edit the field
 	public void editContact(Scanner input) {
 		System.out.println("Enter first name of contact to edit it");
 		String cName = input.nextLine();
@@ -185,6 +190,7 @@ public class AddressBook {
 
 	}
 
+	// to delete a contact from console
 	public void deleteContact(Scanner input) {
 		System.out.println("Enter first name of contact to delete it");
 		String cName = input.nextLine();
@@ -198,8 +204,9 @@ public class AddressBook {
 		}
 	}
 
+	// shows all the options a user can select for operations in address book from console and CSV and JSON file
 	public AddressBook addressBookOption()
-			throws IOException, CsvDataTypeMismatchException, CsvRequiredFieldEmptyException {
+			throws IOException, CsvDataTypeMismatchException, CsvRequiredFieldEmptyException, AddressBookException {
 		Scanner userInput = new Scanner(System.in);
 		System.out.println("Welcome to the address book system. Choose your option");
 		AddressBook addBook = new AddressBook();
